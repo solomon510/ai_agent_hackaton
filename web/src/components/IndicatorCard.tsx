@@ -1,5 +1,5 @@
 import { Indicator } from '../types/api';
-import { AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, HelpCircle } from 'lucide-react';
 
 interface IndicatorCardProps {
   indicator: Indicator;
@@ -13,30 +13,27 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
     switch (indicator.status) {
       case 'detected':
         return {
-          icon: <AlertCircle className="w-4 h-4" />,
+          icon: <AlertCircle className="w-4 h-4 text-red-600" />,
           label: 'Detected',
-          bg: 'bg-red-50',
+          bg: 'bg-red-50/50',
           border: 'border-red-200',
           text: 'text-red-700',
-          iconColor: 'text-red-700'
         };
       case 'not_detected':
         return {
-          icon: <CheckCircle className="w-4 h-4" />,
+          icon: <CheckCircle2 className="w-4 h-4 text-emerald-600" />,
           label: 'Not detected',
-          bg: 'bg-slate-50',
-          border: 'border-slate-200',
-          text: 'text-slate-700',
-          iconColor: 'text-slate-600'
+          bg: 'bg-white',
+          border: 'border-zinc-200',
+          text: 'text-zinc-600',
         };
       case 'not_assessable':
         return {
-          icon: <XCircle className="w-4 h-4" />,
+          icon: <HelpCircle className="w-4 h-4 text-zinc-400" />,
           label: 'Not assessable',
-          bg: 'bg-slate-50',
-          border: 'border-dashed border-slate-300',
-          text: 'text-slate-600',
-          iconColor: 'text-slate-500'
+          bg: 'bg-zinc-50/50',
+          border: 'border-dashed border-zinc-300',
+          text: 'text-zinc-500',
         };
     }
   };
@@ -44,22 +41,29 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
   const config = getStatusConfig();
 
   return (
-    <div className={`border rounded-lg p-3 mb-2 ${config.bg} ${config.border}`}>
-      <div className="flex items-start gap-2">
-        <div className={`flex-shrink-0 ${config.iconColor}`}>{config.icon}</div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <h4 className="text-sm font-medium text-slate-900">{indicator.label}</h4>
-            <span className={`text-xs font-medium ${config.text} flex items-center gap-1`}>
-              {config.icon}
-              {config.label}
-            </span>
+    <div className={`border rounded-lg p-3 transition-colors ${config.bg} ${config.border}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-2.5 min-w-0">
+          <div className="flex-shrink-0 mt-0.5">{config.icon}</div>
+          <div className="min-w-0">
+            <h4 className="text-xs font-semibold text-zinc-900">{indicator.label}</h4>
+            {indicator.status === 'not_assessable' && indicator.reason && (
+              <p className="text-[11px] text-zinc-500 mt-0.5">{indicator.reason}</p>
+            )}
+            <div className="flex items-center gap-2 mt-1 text-[11px] font-mono text-zinc-400">
+              <span>Tool: {indicator.tool}</span>
+              {indicator.evidence && indicator.evidence.length > 0 && (
+                <span className="text-amber-700 font-medium font-sans">
+                  · {indicator.evidence.length} evidence span{indicator.evidence.length > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
           </div>
-          {indicator.status === 'not_assessable' && indicator.reason && (
-            <p className="text-xs text-slate-600 mt-1">{indicator.reason}</p>
-          )}
-          <p className="text-xs text-slate-500 mt-1 font-mono">Tool: {indicator.tool}</p>
         </div>
+
+        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${config.text} bg-white border border-zinc-200 flex-shrink-0`}>
+          {config.label}
+        </span>
       </div>
     </div>
   );

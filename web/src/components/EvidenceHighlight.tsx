@@ -15,10 +15,15 @@ export function EvidenceHighlight({ text, evidences, className = '' }: EvidenceH
   const segments = splitTextByRanges(text, ranges);
   
   return (
-    <div className={`font-mono text-sm whitespace-pre-wrap break-words ${className}`}>
+    <div
+      className={`font-mono text-xs leading-relaxed whitespace-pre-wrap break-words text-zinc-800 ${className}`}
+      data-testid="evidence-highlight-container"
+    >
       {segments.map((segment, index) => (
         segment.highlighted ? (
-          <mark key={index}>{segment.text}</mark>
+          <mark key={index} title="Identified forensic evidence span">
+            {segment.text}
+          </mark>
         ) : (
           <span key={index}>{segment.text}</span>
         )

@@ -2,20 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-slate-50 text-slate-900;
-  font-family: 'Inter', system-ui, sans-serif;
-}
+@layer base {
+  body {
+    @apply bg-white text-zinc-900 font-sans;
+  }
 
-/* Focus rings for accessibility */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-a:focus-visible {
-  @apply outline-2 outline-offset-2 outline-indigo-600;
-}
+  /* Accessible focus states matching dark button aesthetics */
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  a:focus-visible {
+    @apply outline-none ring-2 ring-zinc-900 ring-offset-2 ring-offset-white;
+  }
 
-/* Evidence highlights */
-mark {
-  @apply bg-yellow-200 px-0.5 rounded;
+  /* Clean, highly-readable forensic evidence highlight */
+  mark {
+    @apply bg-amber-100 text-amber-900 font-medium px-1 py-0.5 rounded border border-amber-300;
+  }
 }
