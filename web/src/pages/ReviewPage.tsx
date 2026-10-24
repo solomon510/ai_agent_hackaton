@@ -11,7 +11,7 @@ import { GuidanceCard } from '../components/GuidanceCard';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Spinner } from '../components/Spinner';
 import { CheckCircle2, ExternalLink, ShieldCheck, ArrowLeft, AlertTriangle } from 'lucide-react';
-import { markdownToPlainText } from '../lib/format';
+import { markdownToPlainText, formatIncidentId } from '../lib/format';
 
 export function ReviewPage() {
   const navigate = useNavigate();
@@ -26,9 +26,9 @@ export function ReviewPage() {
   }
   
   // Format original draft into clean plain text format (stripping markdown tags)
-  const originalDraft = markdownToPlainText(assessment.draft);
-  const editedDraft = state.editedDraft !== undefined ? state.editedDraft : originalDraft;
-  const draftEdited = editedDraft !== originalDraft;
+  const rawDraft = state.editedDraft !== undefined ? state.editedDraft : assessment.draft;
+  const editedDraft = markdownToPlainText(rawDraft);
+  const draftEdited = editedDraft !== markdownToPlainText(assessment.draft);
   
   const allEvidence = [
     ...assessment.indicators.flatMap(i => i.evidence),
@@ -77,8 +77,8 @@ export function ReviewPage() {
             
             <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-5 mb-6 text-left space-y-3 font-mono text-xs">
               <div className="flex justify-between items-center py-1 border-b border-zinc-200">
-                <span className="text-zinc-500">Incident ID:</span>
-                <span className="text-zinc-950 font-bold">{state.saveResult.id}</span>
+                <span className="text-zinc-500">Incident Reference:</span>
+                <span className="text-zinc-950 font-bold font-mono">{formatIncidentId(state.saveResult.id)}</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-zinc-200">
                 <span className="text-zinc-500">Status:</span>

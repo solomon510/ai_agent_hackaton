@@ -13,7 +13,7 @@ import { ActivityLog } from '../components/ActivityLog';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Spinner } from '../components/Spinner';
 import { ArrowLeft } from 'lucide-react';
-import { formatDate, markdownToPlainText } from '../lib/format';
+import { formatDate, markdownToPlainText, formatIncidentId } from '../lib/format';
 
 export function IncidentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -76,9 +76,10 @@ export function IncidentDetailPage() {
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-zinc-950">
-                Incident #{incident.id}
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-950 font-sans">
+                Incident #{formatIncidentId(incident.id)}
               </h1>
+              <p className="text-[11px] font-mono text-zinc-400 mt-0.5">Tracking ID: {incident.id}</p>
             </div>
 
             <div>

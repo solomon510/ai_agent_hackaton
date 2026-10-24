@@ -6,7 +6,7 @@ import { RiskBadge } from '../components/RiskBadge';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Skeleton } from '../components/Spinner';
-import { formatDate } from '../lib/format';
+import { formatDate, formatIncidentId } from '../lib/format';
 import { ChevronRight, Plus } from 'lucide-react';
 import { useInvestigation } from '../state/InvestigationContext';
 
@@ -109,7 +109,7 @@ export function IncidentsPage() {
                       onClick={() => navigate(`/incidents/${incident.id}`)}
                     >
                       <td className="px-5 py-3.5 text-zinc-950 font-mono font-medium">
-                        {incident.id}
+                        {formatIncidentId(incident.id)}
                       </td>
                       <td className="px-5 py-3.5 text-zinc-600">
                         {formatDate(incident.created_at)}

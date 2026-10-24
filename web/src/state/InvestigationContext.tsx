@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { InvestigateResponse, Assessment } from '../types/api';
+import { markdownToPlainText } from '../lib/format';
 
-// HARD RULES: Persist the in-progress investigation to sessionStorage. Provide reset().
-// Browser storage is never used as the database. (sessionStorage may hold the in-progress investigation so a refresh does not lose it.)
 interface InvestigationState {
   message: string;
   sender?: string;
@@ -42,7 +41,11 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
     try {
       const stored = sessionStorage.getItem(STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (parsed.editedDraft) {
+          parsed.editedDraft = markdownToPlainText(parsed.editedDraft);
+        }
+        return parsed;
       }
     } catch {
       // Ignore storage errors
@@ -71,8 +74,10 @@ export function InvestigationProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ 
       ...prev, 
       response,
-      // Set edited draft from assessment if it's an assessment and we don't have one
-      editedDraft: prev.editedDraft || (response.type === 'assessment' ? response.draft : undefined)
+      // Always store clean plain text for draft
+      editedDraft: response.type === 'assessment' 
+        ? markdownToPlainText(response.draft) 
+        : undefined
     }));
   };
 
