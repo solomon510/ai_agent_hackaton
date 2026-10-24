@@ -6,9 +6,9 @@ interface NoticeBannerProps {
 
 export function NoticeBanner({ message }: NoticeBannerProps) {
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2" role="note">
-      <Info className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" />
-      <p className="text-sm text-blue-900">{message}</p>
+    <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-3 flex items-start gap-2.5 text-xs text-zinc-700" role="note">
+      <Info className="w-4 h-4 text-zinc-500 flex-shrink-0 mt-0.5" />
+      <p>{message}</p>
     </div>
   );
 }

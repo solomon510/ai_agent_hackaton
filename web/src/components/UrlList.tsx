@@ -1,5 +1,5 @@
 import { UrlItem } from '../types/api';
-import { Copy } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 
 interface UrlListProps {
@@ -18,33 +18,52 @@ export function UrlList({ urls }: UrlListProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Ignore copy errors
+      // Ignore clipboard error
     }
   };
   
   if (urls.length === 0) {
     return (
-      <div className="text-sm text-slate-600 italic">No URLs extracted</div>
+      <div className="text-xs text-zinc-500 italic p-3 rounded-lg bg-zinc-50 border border-zinc-200">
+        No URLs extracted from message
+      </div>
     );
   }
   
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-medium text-slate-900">Extracted URLs</h4>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h4 className="text-xs font-semibold text-zinc-900 uppercase tracking-wider">
+          Extracted Defanged Indicators ({urls.length})
+        </h4>
         <button
           onClick={copyDefanged}
-          className="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100 rounded-md transition-colors min-h-[44px]"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs text-zinc-700 hover:text-zinc-950 bg-zinc-100 hover:bg-zinc-200 rounded-md transition-colors"
           aria-label="Copy indicators"
         >
-          <Copy className="w-3.5 h-3.5" />
-          {copied ? 'Copied' : 'Copy indicators'}
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="text-emerald-700 font-medium">Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5" />
+              <span>Copy Defanged</span>
+            </>
+          )}
         </button>
       </div>
-      <ul className="space-y-2">
+      <ul className="space-y-1.5">
         {urls.map((url, index) => (
-          <li key={index} className="font-mono text-xs text-slate-700 bg-slate-50 p-2 rounded border border-slate-200 break-all">
-            {url.defanged}
+          <li
+            key={index}
+            className="font-mono text-xs text-zinc-800 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-200 break-all select-all flex items-center justify-between gap-2"
+          >
+            <span>{url.defanged}</span>
+            <span className="text-[10px] text-zinc-400 font-sans uppercase border border-zinc-200 bg-white px-1.5 py-0.5 rounded flex-shrink-0">
+              Safe Non-Resolving
+            </span>
           </li>
         ))}
       </ul>

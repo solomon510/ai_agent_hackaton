@@ -1,4 +1,5 @@
 import { GuidanceRef } from '../types/api';
+import { BookOpen } from 'lucide-react';
 
 interface GuidanceCardProps {
   guidance: GuidanceRef;
@@ -6,14 +7,19 @@ interface GuidanceCardProps {
 
 export function GuidanceCard({ guidance }: GuidanceCardProps) {
   return (
-    <div className="border border-slate-200 rounded-lg p-3 mb-2 bg-white">
-      <div className="flex items-start gap-2">
-        <span className="text-xs font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded flex-shrink-0">
-          {guidance.id}
-        </span>
+    <div className="border border-zinc-200 rounded-lg p-3 bg-white hover:border-zinc-300 transition-colors">
+      <div className="flex items-start gap-2.5">
+        <div className="p-1 rounded bg-zinc-100 text-zinc-600 mt-0.5">
+          <BookOpen className="w-3.5 h-3.5" />
+        </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-medium text-slate-900 mb-1">{guidance.title}</h4>
-          <p className="text-xs text-slate-700">{guidance.excerpt}</p>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-mono font-semibold text-zinc-700 bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded">
+              {guidance.id}
+            </span>
+            <h4 className="text-xs font-semibold text-zinc-900">{guidance.title}</h4>
+          </div>
+          <p className="text-xs text-zinc-600 leading-relaxed">{guidance.excerpt}</p>
         </div>
       </div>
     </div>
