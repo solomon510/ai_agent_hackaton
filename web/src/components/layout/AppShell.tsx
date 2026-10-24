@@ -50,7 +50,6 @@ export function AppShell({ children, showStepper = false }: AppShellProps) {
                 </span>
               </button>
 
-              {/* Clean Nav Links (Workbench tab removed per request) */}
               <nav className="hidden sm:flex items-center gap-6 text-sm font-medium">
                 <Link
                   to="/incidents"
@@ -65,13 +64,8 @@ export function AppShell({ children, showStepper = false }: AppShellProps) {
               </nav>
             </div>
 
-            {/* Right Status & Action Button */}
+            {/* Right Action Button */}
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-xs text-zinc-500">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>Offline Air-gap Mode</span>
-              </div>
-
               <button
                 type="button"
                 onClick={handleNewInvestigation}

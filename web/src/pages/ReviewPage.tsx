@@ -11,6 +11,7 @@ import { GuidanceCard } from '../components/GuidanceCard';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Spinner } from '../components/Spinner';
 import { CheckCircle2, ExternalLink, ShieldCheck, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { markdownToPlainText } from '../lib/format';
 
 export function ReviewPage() {
   const navigate = useNavigate();
@@ -24,8 +25,9 @@ export function ReviewPage() {
     return null;
   }
   
-  const originalDraft = assessment.draft;
-  const editedDraft = state.editedDraft ?? originalDraft;
+  // Format original draft into clean plain text format (stripping markdown tags)
+  const originalDraft = markdownToPlainText(assessment.draft);
+  const editedDraft = state.editedDraft !== undefined ? state.editedDraft : originalDraft;
   const draftEdited = editedDraft !== originalDraft;
   
   const allEvidence = [
@@ -93,14 +95,14 @@ export function ReviewPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => navigate(`/incidents/${state.saveResult!.id}`)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm cursor-pointer"
               >
                 <span>View in Saved Incidents</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => { reset(); navigate('/'); }}
-                className="inline-flex items-center justify-center px-5 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 rounded-lg text-xs font-semibold transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               >
                 Investigate another message
               </button>
@@ -116,10 +118,10 @@ export function ReviewPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-zinc-950 mb-1">
-            Review & Save
+            Review
           </h1>
           <p className="text-sm text-zinc-600">
-            Review the investigation results, adjust guidance if needed, and confirm to persist.
+            Review the investigation results, adjust guidance in plain text if needed, and confirm to persist.
           </p>
         </div>
         
@@ -194,12 +196,12 @@ export function ReviewPage() {
             </div>
           </div>
           
-          {/* Right Column: Editable Draft & Approval */}
+          {/* Right Column: Editable Draft in Plain Text & Approval */}
           <div className="space-y-4">
             <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-xs font-semibold text-zinc-900 uppercase tracking-wider">
-                  User guidance draft
+                  User guidance draft (plain text)
                 </h2>
                 {draftEdited && (
                   <span className="text-[10px] font-mono text-zinc-600 bg-zinc-100 border border-zinc-200 px-2 py-0.5 rounded">
@@ -208,13 +210,14 @@ export function ReviewPage() {
                 )}
               </div>
               <p className="text-xs text-zinc-500 mb-3">
-                Nothing is sent automatically; you can edit this draft.
+                Nothing is sent automatically; you can edit this plain text guidance.
               </p>
               <textarea
                 value={editedDraft}
                 onChange={(e) => setEditedDraft(e.target.value)}
-                className="w-full px-3.5 py-3 bg-zinc-50 border border-zinc-200 rounded-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 font-mono text-xs leading-relaxed min-h-[200px]"
+                className="w-full px-3.5 py-3 bg-zinc-50 border border-zinc-200 rounded-lg text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 font-sans text-xs leading-relaxed min-h-[220px]"
                 disabled={mutation.isPending}
+                placeholder="User guidance instructions in plain text..."
               />
             </div>
             
@@ -251,7 +254,7 @@ export function ReviewPage() {
               <button
                 onClick={handleSave}
                 disabled={!canSave}
-                className="w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-sm"
+                className="w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
               >
                 {mutation.isPending ? (
                   <>
@@ -273,7 +276,7 @@ export function ReviewPage() {
               <div className="pt-2 border-t border-zinc-100 flex gap-2">
                 <button
                   onClick={() => navigate('/results')}
-                  className="flex-1 py-2 px-3 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2 px-3 border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Back to Results</span>
@@ -281,7 +284,7 @@ export function ReviewPage() {
                 <button
                   onClick={() => setShowDiscardDialog(true)}
                   disabled={mutation.isPending}
-                  className="py-2 px-3 border border-zinc-200 hover:bg-red-50 hover:border-red-200 text-red-600 rounded-lg text-xs font-medium transition-colors"
+                  className="py-2 px-3 border border-zinc-200 hover:bg-red-50 hover:border-red-200 text-red-600 rounded-lg text-xs font-medium transition-colors cursor-pointer"
                 >
                   Discard
                 </button>
@@ -304,13 +307,13 @@ export function ReviewPage() {
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setShowDiscardDialog(false)}
-                className="px-4 py-2 border border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-lg text-xs font-semibold transition-colors"
+                className="px-4 py-2 border border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDiscard}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition-colors"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               >
                 Discard
               </button>

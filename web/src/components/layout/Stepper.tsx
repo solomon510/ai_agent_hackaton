@@ -13,14 +13,13 @@ export function Stepper({ currentStep }: StepperProps) {
 
   const steps = [
     { number: 1, label: 'Message Input', path: '/' },
-    { number: 2, label: 'Forensic Analysis', path: '/results', requiresAssessment: true },
-    { number: 3, label: 'Human Review', path: '/review', requiresAssessment: true },
+    { number: 2, label: 'Analysis', path: '/results', requiresAssessment: true },
+    { number: 3, label: 'Review', path: '/review', requiresAssessment: true },
     { number: 4, label: 'Saved Incident', path: '/incidents' },
   ];
 
   const handleStepClick = (step: typeof steps[0]) => {
     if (step.requiresAssessment && !assessment) {
-      // If user hasn't run analysis yet, stay on input
       navigate('/');
       return;
     }

@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { AppShell } from '../components/layout/AppShell';
 import { useInvestigation } from '../state/InvestigationContext';
-import { RiskBadge } from '../components/RiskBadge';
 import { UncertaintyBanner } from '../components/UncertaintyBanner';
 import { EvidenceHighlight } from '../components/EvidenceHighlight';
 import { UrlList } from '../components/UrlList';
@@ -9,7 +8,7 @@ import { AttackSequence } from '../components/AttackSequence';
 import { GuidanceCard } from '../components/GuidanceCard';
 import { IndicatorCard } from '../components/IndicatorCard';
 import { ActivityLog } from '../components/ActivityLog';
-import { ArrowLeft, ArrowRight, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ShieldAlert, AlertTriangle, Link2, CheckCircle2, Scan, ShieldCheck } from 'lucide-react';
 
 export function ResultsPage() {
   const navigate = useNavigate();
@@ -26,36 +25,182 @@ export function ResultsPage() {
     ...assessment.indicators.flatMap(i => i.evidence),
     ...assessment.social_engineering.flatMap(i => i.evidence),
   ];
+
+  const detectedSignalsCount = 
+    assessment.indicators.filter(i => i.status === 'detected').length + 
+    assessment.social_engineering.filter(i => i.status === 'detected').length;
+
+  const isHighRisk = assessment.risk.band === 'High';
+  const isSuspicious = assessment.risk.band === 'Suspicious';
+
+  const headerConfig = isHighRisk ? {
+    bg: 'bg-[#FFF5F5]',
+    border: 'border-red-200/80',
+    iconBg: 'bg-red-600',
+    eyebrowColor: 'text-red-700',
+    eyebrowText: 'IMMEDIATE ATTENTION RECOMMENDED',
+    badgeBorder: 'border-red-200',
+    badgeBg: 'bg-white',
+    badgeText: 'text-red-700',
+    scoreColor: 'text-red-600',
+    pinColor: 'bg-red-600',
+    dividerColor: 'border-red-200/60',
+  } : isSuspicious ? {
+    bg: 'bg-[#FFFBEB]',
+    border: 'border-amber-200/80',
+    iconBg: 'bg-amber-600',
+    eyebrowColor: 'text-amber-800',
+    eyebrowText: 'FURTHER CAUTION & VERIFICATION RECOMMENDED',
+    badgeBorder: 'border-amber-200',
+    badgeBg: 'bg-white',
+    badgeText: 'text-amber-800',
+    scoreColor: 'text-amber-600',
+    pinColor: 'bg-amber-600',
+    dividerColor: 'border-amber-200/60',
+  } : {
+    bg: 'bg-zinc-50',
+    border: 'border-zinc-200',
+    iconBg: 'bg-zinc-800',
+    eyebrowColor: 'text-zinc-600',
+    eyebrowText: 'STANDARD VIGILANCE RECOMMENDED',
+    badgeBorder: 'border-zinc-200',
+    badgeBg: 'bg-white',
+    badgeText: 'text-zinc-700',
+    scoreColor: 'text-zinc-700',
+    pinColor: 'bg-zinc-800',
+    dividerColor: 'border-zinc-200',
+  };
   
   return (
     <AppShell showStepper={true}>
       <div className="space-y-6">
-        {/* Top Diagnostic HUD */}
-        <div className="bg-white border border-zinc-200 rounded-xl p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <RiskBadge band={assessment.risk.band} size="lg" />
-                <span className="text-xs font-mono text-zinc-500">
-                  Score: <strong className="text-zinc-900 font-bold">{assessment.risk.score} pts</strong>
-                </span>
+        {/* Title & Continue CTA */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 tracking-tight">
+            Message analysis
+          </h1>
+
+          <button
+            onClick={() => navigate('/review')}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs rounded-lg transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
+          >
+            <span>Continue to Review</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Top Diagnostic HUD Widget (matching the exact design from the reference screenshot) */}
+        <div className={`${headerConfig.bg} ${headerConfig.border} border rounded-2xl p-6 sm:p-7 shadow-xs`}>
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
+            {/* Left section: Icon + Eyebrow + Title + Description */}
+            <div className="flex items-start gap-4 flex-1">
+              <div className={`w-12 h-12 rounded-xl ${headerConfig.iconBg} text-white flex items-center justify-center shadow-sm flex-shrink-0 mt-0.5`}>
+                <ShieldAlert className="w-6 h-6" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-zinc-950 tracking-tight">
-                {assessment.assessment}
-              </h1>
+              <div className="space-y-2">
+                <span className={`text-[11px] font-bold uppercase tracking-wider ${headerConfig.eyebrowColor} block font-sans`}>
+                  {headerConfig.eyebrowText}
+                </span>
+
+                <div className="flex items-center gap-2.5">
+                  <h2 className="text-2xl font-bold text-zinc-950 tracking-tight">
+                    {assessment.risk.band} risk
+                  </h2>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${headerConfig.badgeBg} ${headerConfig.badgeBorder} ${headerConfig.badgeText} border shadow-2xs`}>
+                    {assessment.risk.band}
+                  </span>
+                </div>
+
+                <p className="text-sm text-zinc-700 leading-relaxed max-w-2xl">
+                  {assessment.assessment}
+                </p>
+              </div>
             </div>
 
-            <button
-              onClick={() => navigate('/review')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-xs rounded-lg transition-colors shadow-sm flex-shrink-0"
-            >
-              <span>Continue to Review</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {/* Right section: Elevated Risk Score Widget with Gradient Spectrum Track */}
+            <div className="bg-white border border-zinc-200/90 rounded-2xl p-5 shadow-xs w-full lg:w-72 flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                  RISK SCORE
+                </span>
+                <div className="text-2xl font-extrabold text-zinc-950 font-mono tracking-tight">
+                  <span className={headerConfig.scoreColor}>{assessment.risk.score}</span>
+                  <span className="text-xs font-normal text-zinc-400">/100</span>
+                </div>
+              </div>
+
+              {/* Gradient Track Slider with Dynamic Thumb */}
+              <div className="relative my-3.5">
+                <div className="h-2 w-full rounded-full bg-gradient-to-r from-sky-300 via-amber-400 to-red-500" />
+                <div
+                  className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full ${headerConfig.pinColor} border-2 border-white shadow-md transition-all duration-500`}
+                  style={{ left: `${Math.min(Math.max(assessment.risk.score, 4), 96)}%` }}
+                  title={`Risk Score: ${assessment.risk.score}/100`}
+                />
+              </div>
+
+              <div className="flex justify-between text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+                <span>LOW</span>
+                <span>SUSPICIOUS</span>
+                <span>HIGH</span>
+              </div>
+
+              <p className="text-[11px] text-zinc-400 text-center mt-3">
+                Heuristic score, not a probability.
+              </p>
+            </div>
           </div>
-          
-          <UncertaintyBanner />
+
+          {/* Bottom section: 3 Metric Columns with Divider */}
+          <div className={`border-t ${headerConfig.dividerColor} mt-6 pt-5 grid grid-cols-1 sm:grid-cols-3 gap-6`}>
+            {/* Metric 1: Signals Detected */}
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-red-100/70 border border-red-200 flex items-center justify-center text-red-600 flex-shrink-0">
+                <Scan className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-zinc-950 font-mono leading-none mb-1">
+                  {detectedSignalsCount}
+                </div>
+                <div className="text-xs text-zinc-500">
+                  signals detected
+                </div>
+              </div>
+            </div>
+
+            {/* Metric 2: Links Extracted */}
+            <div className="flex items-center gap-3 sm:border-l sm:border-zinc-200/80 sm:pl-6">
+              <div className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 flex-shrink-0">
+                <Link2 className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-zinc-950 font-mono leading-none mb-1">
+                  {assessment.urls.length}
+                </div>
+                <div className="text-xs text-zinc-500">
+                  links extracted
+                </div>
+              </div>
+            </div>
+
+            {/* Metric 3: Evidence Validation */}
+            <div className="flex items-center gap-3 sm:border-l sm:border-zinc-200/80 sm:pl-6">
+              <div className="w-9 h-9 rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-700 flex-shrink-0">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-xl font-bold text-zinc-950 leading-none mb-1">
+                  {assessment.validation.passed ? 'Passed' : 'Review'}
+                </div>
+                <div className="text-xs text-zinc-500">
+                  evidence validation
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <UncertaintyBanner />
         
         {/* Split Telemetry Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -231,7 +376,7 @@ export function ResultsPage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-zinc-200">
           <button
             onClick={() => navigate('/')}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-zinc-300 hover:bg-zinc-50 text-zinc-700 rounded-lg text-xs font-semibold transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-zinc-300 hover:bg-zinc-50 text-zinc-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Edit message</span>
@@ -239,7 +384,7 @@ export function ResultsPage() {
           
           <button
             onClick={() => navigate('/review')}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm cursor-pointer"
           >
             <span>Continue to Review</span>
             <ArrowRight className="w-4 h-4" />

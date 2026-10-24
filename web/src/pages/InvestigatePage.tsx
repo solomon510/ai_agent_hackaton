@@ -137,11 +137,9 @@ export function InvestigatePage() {
 
           <div className="flex items-center justify-center gap-2 text-xs text-zinc-500 font-medium pt-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span><strong className="text-zinc-900">Offline Air-gap</strong> Active</span>
-            <span className="text-zinc-300">·</span>
             <span><strong className="text-zinc-900">Deterministic</strong> Scoring</span>
             <span className="text-zinc-300">·</span>
-            <span>Zero External URL Calls</span>
+            <span>Zero External Network Calls</span>
           </div>
         </div>
         
@@ -321,24 +319,14 @@ export function InvestigatePage() {
                 </ul>
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+              <div className="pt-2">
                 <button
                   onClick={handleAnalyze}
                   disabled={!isValid || mutation.isPending}
-                  className="w-full sm:w-auto flex-1 py-3 px-6 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold rounded-lg shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-sm cursor-pointer"
+                  className="w-full py-3.5 px-6 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold rounded-lg shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-sm cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>Analyze Message</span>
-                </button>
-                <button
-                  onClick={() => {
-                    const sample = sampleMessages[0];
-                    handleSampleClick(sample.message);
-                  }}
-                  type="button"
-                  className="w-full sm:w-auto px-5 py-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-semibold rounded-lg text-sm transition-colors cursor-pointer"
-                >
-                  View Sample
                 </button>
               </div>
             )}

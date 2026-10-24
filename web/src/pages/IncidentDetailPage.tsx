@@ -13,7 +13,7 @@ import { ActivityLog } from '../components/ActivityLog';
 import { ErrorBanner } from '../components/ErrorBanner';
 import { Spinner } from '../components/Spinner';
 import { ArrowLeft } from 'lucide-react';
-import { formatDate } from '../lib/format';
+import { formatDate, markdownToPlainText } from '../lib/format';
 
 export function IncidentDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -147,10 +147,10 @@ export function IncidentDetailPage() {
             
             <div className="bg-white border border-zinc-200 rounded-xl p-5 shadow-sm">
               <h2 className="text-xs font-semibold text-zinc-900 uppercase tracking-wider mb-2">
-                Final draft
+                Final guidance draft (plain text)
               </h2>
-              <pre className="text-xs text-zinc-800 font-mono whitespace-pre-wrap bg-zinc-50 p-3.5 rounded-lg border border-zinc-200 leading-relaxed">
-                {incident.final_draft}
+              <pre className="text-xs text-zinc-800 font-sans whitespace-pre-wrap bg-zinc-50 p-3.5 rounded-lg border border-zinc-200 leading-relaxed">
+                {markdownToPlainText(incident.final_draft)}
               </pre>
             </div>
           </div>
