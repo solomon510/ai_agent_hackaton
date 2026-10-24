@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Shield, Plus } from 'lucide-react';
 import { Stepper } from './Stepper';
+import { useInvestigation } from '../../state/InvestigationContext';
 
 interface AppShellProps {
   children: ReactNode;
@@ -10,6 +11,8 @@ interface AppShellProps {
 
 export function AppShell({ children, showStepper = false }: AppShellProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { reset } = useInvestigation();
   
   const getCurrentStep = () => {
     if (location.pathname === '/') return 1;
@@ -20,8 +23,12 @@ export function AppShell({ children, showStepper = false }: AppShellProps) {
   };
 
   const isIncidentsActive = location.pathname === '/incidents' || location.pathname.startsWith('/incidents/');
-  const isInvestigateActive = !isIncidentsActive;
   
+  const handleNewInvestigation = () => {
+    reset();
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-white text-zinc-900 flex flex-col font-sans">
       {/* Top Clean Header matching ScholarXI inspiration */}
@@ -30,27 +37,21 @@ export function AppShell({ children, showStepper = false }: AppShellProps) {
           <div className="flex items-center justify-between h-16">
             {/* Logo & Navigation */}
             <div className="flex items-center gap-8">
-              <Link to="/" className="flex items-center gap-2.5 group">
+              <button
+                type="button"
+                onClick={handleNewInvestigation}
+                className="flex items-center gap-2.5 group cursor-pointer text-left"
+              >
                 <div className="w-8 h-8 rounded-lg bg-zinc-900 flex items-center justify-center text-white">
                   <Shield className="w-4 h-4" />
                 </div>
                 <span className="text-base font-bold tracking-tight text-zinc-950 font-sans">
                   Message Investigator
                 </span>
-              </Link>
+              </button>
 
-              {/* Clean Nav Links */}
+              {/* Clean Nav Links (Workbench tab removed per request) */}
               <nav className="hidden sm:flex items-center gap-6 text-sm font-medium">
-                <Link
-                  to="/"
-                  className={`transition-colors ${
-                    isInvestigateActive
-                      ? 'text-zinc-950 font-semibold'
-                      : 'text-zinc-500 hover:text-zinc-900'
-                  }`}
-                >
-                  Workbench
-                </Link>
                 <Link
                   to="/incidents"
                   className={`transition-colors ${
@@ -71,13 +72,14 @@ export function AppShell({ children, showStepper = false }: AppShellProps) {
                 <span>Offline Air-gap Mode</span>
               </div>
 
-              <Link
-                to="/"
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold rounded-lg transition-all shadow-sm"
+              <button
+                type="button"
+                onClick={handleNewInvestigation}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold rounded-lg transition-all shadow-sm cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Investigation</span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
