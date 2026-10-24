@@ -69,9 +69,28 @@ export function Stepper({ currentStep }: StepperProps) {
                 <div className="hidden sm:block w-6 h-px bg-zinc-200" />
               )}
             </div>
-          );
-        })}
-      </div>
-    </nav>
+             <Link to={step.link}>
+              <span
+                className={`text-sm font-medium ${step.number === currentStep
+                    ? 'text-indigo-700'
+                    : step.number < currentStep
+                      ? 'text-indigo-600'
+                      : 'text-slate-600'
+                  }`}
+              >
+                {step.label}
+              </span>
+            </Link>
+          </div>
+          {index < steps.length - 1 && (
+            <div
+              className={`flex-1 h-px mx-4 ${
+                step.number < currentStep ? 'bg-indigo-300' : 'bg-slate-300'
+              }`}
+            />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
